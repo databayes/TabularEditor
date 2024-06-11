@@ -1,0 +1,12 @@
+// For use in Card Visual Details Section
+
+foreach (var m in Selected.Measures) {
+    m.Table.AddMeasure(
+        m.Name + " Variance Indicator CF",
+            "SWITCH(TRUE()," +
+                m.DaxObjectName + " < 0, UNICHAR(129055)," +
+                m.DaxObjectName + " = 0, UNICHAR(129112)," +
+                m.DaxObjectName + " > 0, UNICHAR(129053)" +
+            ")"
+        );
+    }
