@@ -1,0 +1,71 @@
+CY
+IF ([ShowValueForDates],SELECTEDMEASURE())
+
+PY
+// sales for previous year, but filter to only go as far as those dates in this year that have had Sales
+IF (
+    [ShowValueForDates],
+    CALCULATE (
+        SELECTEDMEASURE (),
+        CALCULATETABLE (
+            DATEADD ( 'Date'[Date], -1, YEAR ),
+            'Date'[DateWithSales] = TRUE
+        )
+    )
+)
+
+YTD
+-- Calculation Item YTD
+IF (
+    [ShowValueForDates],
+    CALCULATE ( 
+        SELECTEDMEASURE (), 
+        DATESYTD ( 'date'[date], "31/05" ) 
+        )
+)
+
+-- Calculation Item Sales PFYTD
+IF (
+    [ShowValueForDates],
+    CALCULATE (
+        SELECTEDMEASURE (),
+        CALCULATETABLE (
+            DATEADD ( 'Date'[Date], -1, YEAR ),
+            'Time Intelligence'[Name] = "YTD",
+            'Date'[DateWithSales] = TRUE
+        )
+    )
+)
+
+-- YOY
+VAR CY =
+    IF ( [ShowValueForDates], SELECTEDMEASURE () )
+VAR PY =
+    IF (
+        [ShowValueForDates],
+        CALCULATE (
+            SELECTEDMEASURE (),
+            CALCULATETABLE (
+                DATEADD ( 'Date'[Date], -1, YEAR ),
+                'Date'[DateWithSales] = TRUE
+            )
+        )
+    )
+RETURN
+    IF ( [ShowValueForDates], SELECTEDMEASURE () )
+        - IF (
+            [ShowValueForDates],
+            CALCULATE (
+                SELECTEDMEASURE (),
+                CALCULATETABLE (
+                    DATEADD ( 'Date'[Date], -1, YEAR ),
+                    'Date'[DateWithSales] = TRUE
+                )
+            )
+        )
+		
+YOY%		
+DIVIDE (
+    CALCULATE ( SELECTEDMEASURE (), 'Time Intelligence'[Name] = "YOY" ),
+    CALCULATE ( SELECTEDMEASURE (), 'Time Intelligence'[Name] = "PY" )
+)

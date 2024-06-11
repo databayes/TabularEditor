@@ -1,0 +1,118 @@
+// Creates a TOTALYTD measure for every selected measure.
+
+var dateColumn = "'Date'[Date]";
+var endYear = "31/05";
+
+foreach(var m in Selected.Measures) {
+    m.Table.AddMeasure(
+        m.Name + " YTD",                                       // Name
+        "TOTALYTD(" + m.DaxObjectName + ", " + dateColumn + ", " + "'endYear'"+ ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+}
+
+// Creates a TOTALFYTD measure for every selected measure.
+foreach (var m in Selected.Measures) {
+m.Table.AddMeasure (
+m.Name + " FYTD", // Name
+"TOTALYTD (" + 
+m.DaxObjectName + 
+", 'Date' [Date]," + 
+"\" 05/31 \")", // DAX expression - enter financial date year end, use \in front of "
+m.DisplayFolder // Display Folder
+);
+}
+
+// Creates a TOTALYTD measure for every selected measure.
+
+var dateColumn = "'Date'[Date]";
+var endYear = "31/05";
+
+foreach(var m in Selected.Measures) {
+    m.Table.AddMeasure(
+        m.Name + " YTD",                                       // Name
+        "TOTALYTD(" + m.DaxObjectName + ", " + dateColumn + ", " + "'endYear'"+ ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+}
+
+// Creates a 1 MONTH Moving Average measure for every selected measure.
+foreach (var m in Selected.Measures) {
+m.Table.AddMeasure (
+m.Name + " MA", // Name
+"AVERAGEX (DATESINPERIOD('Date'[Date], LASTDATE('Date'[Date]), -1, Month)," +
+m.DaxObjectName + ")", // DAX expression 
+m.DisplayFolder // Display Folder
+);
+}
+
+var dateColumn = "'Date'[Date]";
+
+
+// Creates time intelligence measures for every selected measure:
+foreach(var m in Selected.Measures) {
+    // Year-to-date:
+    m.Table.AddMeasure(
+        m.Name + " YTD",                                       // Name
+        "IF([ShowValueForDates],TOTALYTD(" + m.DaxObjectName + ", " + dateColumn + ", \"31/05\"))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+    
+    // Previous year:
+    m.Table.AddMeasure(
+        m.Name + " PY",                                       // Name
+        "IF([ShowValueForDates],CALCULATE(" + m.DaxObjectName + ", CALCULATETABLE(DATEADD(" + dateColumn + ", -1, YEAR))))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );  
+  
+      // Previous Year-to-date:
+    m.Table.AddMeasure(
+        m.Name + " PYTD",                                       // Name
+        "IF([ShowValueForDates],CALCULATE([" + m.Name + " YTD], CALCULATETABLE(DATEADD(" + dateColumn + ", -1, YEAR))))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );  
+    
+    // Year-over-year
+    m.Table.AddMeasure(
+        m.Name + " YoY",                                       // Name
+        m.DaxObjectName + " - [" + m.Name + " PY]",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+    
+    // Year-over-year %:
+    m.Table.AddMeasure(
+        m.Name + " YoY%",                                           // Name
+        "DIVIDE(" + m.DaxObjectName + ", [" + m.Name + " YoY])",    // DAX expression
+        m.DisplayFolder                                             // Display Folder
+    ).FormatString = "0.0 %";  // Set format string as percentage
+    
+    // Quarter-to-date:
+    m.Table.AddMeasure(
+        m.Name + " QTD",                                            // Name
+        "TOTALQTD(" + m.DaxObjectName + ", CALCULATETABLE( DATEADD (" + dateColumn + ", -1, QUARTER)))",    // DAX expression
+        m.DisplayFolder                                             // Display Folder
+    );
+    
+    // Month-to-date:
+    m.Table.AddMeasure(
+        m.Name + " MTD",                                       // Name
+        "TOTALMTD(" + m.DaxObjectName + ", " + dateColumn + ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+}
+
+
+// Creates a TOTALMQTD measure for every selected measure.
+
+var dateColumn = "'Date'[Date]";
+var endYear = "31/05";
+
+foreach(var m in Selected.Measures) {
+    m.Table.AddMeasure(
+    m.Name + " QTD",                                       // Name
+    "CALCULATE(" + m.DaxObjectName + ", DATESQTD(" + dateColumn + "))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    );
+}
+
+

@@ -1,0 +1,125 @@
+var dateColumn = "'Date'[Date]";
+var fiscalYear = "\"31/03\"";
+
+// Creates time intelligence measures for every selected measure:
+foreach(var m in Selected.Measures) {
+    // Year-to-date:
+     m.Table.AddMeasure(
+        m.Name + " YTD",                                       // Name
+    "CALCULATE(" + 
+        m.DaxObjectName + "," +
+        "DATESYTD(" + dateColumn + ", " + fiscalYear + "))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+
+    // PYTD:
+m.Table.AddMeasure(
+        m.Name + " PYTD",                                       // Name
+     "IF([ShowValueForDates],  CALCULATE(" + 
+        m.DaxObjectName + "," +
+        "CALCULATETABLE(" +
+           "DATESYTD( DATEADD( 'Date'[Date], -1, YEAR ), " + fiscalYear + " )," +
+            "'Date'[DateWithSales] = TRUE ) ) " +
+        ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,  
+
+    
+    // Previous year:
+    m.Table.AddMeasure(
+        m.Name + " PY",                                       // Name
+     "IF([ShowValueForDates],  CALCULATE(" + 
+        m.DaxObjectName + "," +
+        "CALCULATETABLE(" +
+           " DATEADD( 'Date'[Date], -1, YEAR )," +
+            "'Date'[DateWithSales] = TRUE ) ) " +
+        ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,    
+
+    
+    // Year-over-year
+    m.Table.AddMeasure(
+        m.Name + " YoY",                                       // Name
+        m.DaxObjectName + " - [" + m.Name + " PY]",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+
+    
+    // Year-over-year %:
+    m.Table.AddMeasure(
+        m.Name + " YoY%",                                           // Name
+        "DIVIDE(" + m.DaxObjectName + ", [" + m.Name + " YoY])",    // DAX expression
+        m.DisplayFolder                                             // Display Folder
+    ).FormatString = "0.0 %";  // Set format string as percentage
+    
+
+
+    // Quarter-to-date:
+    m.Table.AddMeasure(
+        m.Name + " QTD",                                            // Name
+        "TOTALQTD(" + m.DaxObjectName + ", " + dateColumn + ")",    // DAX expression
+        m.DisplayFolder                                             // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+
+    
+    // Month-to-date:
+    m.Table.AddMeasure(
+        m.Name + " MTD",                                       // Name
+        "TOTALMTD(" + m.DaxObjectName + ", " + dateColumn + ")",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+
+    // PMTD:
+    m.Table.AddMeasure(
+        m.Name + " PMTD",                                       // Name
+     "IF([ShowValueForDates],  \nCALCULATE(\n" + 
+        m.DaxObjectName + "," +
+        "\nCALCULATETABLE(\n" +
+           "DATESMTD( DATEADD( 'Date'[Date], -1, MONTH )),\n " +
+            "'Date'[DateWithSales] = TRUE ) \n " +
+        "))",     // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,  
+
+
+    // Month-Over-Month
+    m.Table.AddMeasure(
+        m.Name + " MoM",                                       // Name
+        "[" + m.Name + " MTD] - [" + m.Name + " PMTD]",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+
+
+    // Month over month -to-date%
+    m.Table.AddMeasure(
+        m.Name + " MOMTD%",                                       // Name
+        "DIVIDE([" + m.Name + " MoM]" + " , [" + m.Name + " PMTD])",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "0.0 %";  // Set format string as one dec point and %
+
+// Year-over-year-to-date
+    m.Table.AddMeasure(
+        m.Name + " YOYTD",                                       // Name
+        "[" + m.Name + " YTD]" + " - [" + m.Name + " PYTD]",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "#,0.00";  // Set format string as double dec point and ,
+
+// Year-over-year-to-date%
+    m.Table.AddMeasure(
+        m.Name + " YOYTD%",                                       // Name
+        "DIVIDE([" + m.Name + " YOYTD]" + " , [" + m.Name + " PYTD])",            // DAX expression
+        m.DisplayFolder                                        // Display Folder
+    ).FormatString = "0.0 %";  // Set format string as one dec point and %
+
+}
+
+
+
+
+
