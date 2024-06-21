@@ -1,0 +1,9 @@
+:ObjectType = "Column"
+
+:ObjectType="Column" and RegEx.IsMatch(Name,"(Date)")
+
+var tableName = Selected.Table.Name;
+var result = EvaluateDax("TOPN(20,'"+tableName+"')");
+result.Output();
+
+
