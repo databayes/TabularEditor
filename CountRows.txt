@@ -1,4 +1,4 @@
-*
+/*
  * Title: Auto-generate COUNTROWS measures from tables
  * 
  * Author: Edgar Walther, twitter.com/edgarwalther
