@@ -1,0 +1,27 @@
+MEASURE 'Sales'[# Orders] =
+    DISTINCTCOUNT(Sales[Order Number])
+    FormatString = "#,0"
+
+MEASURE 'Sales'[£ Average Order Value] =
+    DIVIDE([£ Sales Amount], [# Orders])
+    FormatString = "$#,0.00;($#,0.00);$#,0.00"
+
+MEASURE 'Sales'[Product Sales %] =
+    DIVIDE(
+        [£ Sales Amount],
+        CALCULATE(
+            [£ Sales Amount],
+            REMOVEFILTERS(Product[Product])
+        )
+    )
+    FormatString = "0.0%"
+
+MEASURE 'Sales'[Product Sales Rank] =
+    RANKX(
+        ALL(Product[Product]),
+        [£ Sales Amount],
+        ,
+        DESC,
+        DENSE
+    )
+    FormatString = "#,0"
