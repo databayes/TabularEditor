@@ -1,25 +1,22 @@
-MEASURE 'Sales'[# Orders] =
-    DISTINCTCOUNT(Sales[Order Number])
-    FormatString = "#,0"
 
-MEASURE 'Sales'[£ Average Order Value] =
-    DIVIDE([£ Sales Amount], [# Orders])
+MEASURE 'Orders'[£ Average Order Value] =
+    DIVIDE([£ Order Value], [# Order Quantity])
     FormatString = "$#,0.00;($#,0.00);$#,0.00"
 
-MEASURE 'Sales'[Product Sales %] =
+MEASURE 'Orders'[Product Sales %] =
     DIVIDE(
-        [£ Sales Amount],
+        [£ Order Value],
         CALCULATE(
-            [£ Sales Amount],
-            REMOVEFILTERS(Product[Product])
+            [£ Order Value],
+            REMOVEFILTERS('Products'[Product Name])
         )
     )
     FormatString = "0.0%"
 
-MEASURE 'Sales'[Product Sales Rank] =
+MEASURE 'Orders'[Product Sales Rank] =
     RANKX(
-        ALL(Product[Product]),
-        [£ Sales Amount],
+        ALL('Products'[Product Name]),
+        [£ Order Value],
         ,
         DESC,
         DENSE
