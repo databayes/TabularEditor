@@ -1,9 +1,28 @@
+------------------------------
+-- Measure: [# Order Quantity]
+------------------------------
+MEASURE 'Orders'[# Order Quantity] = SUM('Orders'[Net Order Quantity])
+    , DisplayFolder = "_Order Measures"
+    , FormatString = "#,##0"
 
-MEASURE 'Orders'[£ Average Order Value] =
-    DIVIDE([£ Order Value], [# Order Quantity])
-    FormatString = "$#,0.00;($#,0.00);$#,0.00"
+-----------------------------------
+-- Measure: [£ Average Order Value]
+-----------------------------------
+MEASURE 'Orders'[£ Average Order Value] = DIVIDE([£ Order Value], [# Order Quantity])
+    , DisplayFolder = "_Order Measures"
+    , FormatString = """$""#,##0"
 
-MEASURE 'Orders'[Product Sales %] =
+---------------------------
+-- Measure: [£ Order Value]
+---------------------------
+MEASURE 'Orders'[£ Order Value] = SUM('Orders'[Net Order Value])
+    , DisplayFolder = "_Order Measures"
+    , FormatString = """$""#,##0"
+
+-----------------------------
+-- Measure: [Product Sales %]
+-----------------------------
+MEASURE 'Orders'[Product Sales %] = 
     DIVIDE(
         [£ Order Value],
         CALCULATE(
@@ -11,9 +30,13 @@ MEASURE 'Orders'[Product Sales %] =
             REMOVEFILTERS('Products'[Product Name])
         )
     )
-    FormatString = "0.0%"
+    , DisplayFolder = "_Order Measures"
+    , FormatString = "0.0%"
 
-MEASURE 'Orders'[Product Sales Rank] =
+--------------------------------
+-- Measure: [Product Sales Rank]
+--------------------------------
+MEASURE 'Orders'[Product Sales Rank] = 
     RANKX(
         ALL('Products'[Product Name]),
         [£ Order Value],
@@ -21,4 +44,5 @@ MEASURE 'Orders'[Product Sales Rank] =
         DESC,
         DENSE
     )
-    FormatString = "#,0"
+    , DisplayFolder = "_Order Measures"
+    , FormatString = "#,0"
